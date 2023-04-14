@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<title>Bot Intercity / Bilkom</title>
+<style>
+            body {
+                background-color: #f0f8ff;
+                font-family: Arial, sans-serif;
+            }
+    
+            label {
+                color: #008000;
+            }
+    
+            input[type=number] {
+                color: #008000;
+                font-family: Arial, sans-serif;
+            }
+    
+            select {
+                color: #008000;
+                font-family: Arial, sans-serif;
+            }
+    
+            .button {
+                background-color: #008000;
+                border: none;
+                color: #fff;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+    
+            #timer {
+                color: #008000;
+                font-family: Arial, sans-serif;
+                font-size: 20px;
+            }
+    
+            h1 {
+                color: #008000;
+                font-family: Arial, sans-serif;
+                font-size: 24px;
+            }
+    
+            div {
+                margin-bottom: 10px;
+            }
+    
+            p {
+                margin: 0px;
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+            }
+    
+            .status {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+    
+            .status-intercity {
+                background-color: {{ color_x }};
+            }
+    
+            .status-bilkom {
+                background-color: {{ color_y }};
+            }
+
+            .checkboxes {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .button {
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+              }
+              
+              .button1 {background-color: #4CAF50;} /* Green */
+              .button2 {background-color: #008CBA;} /* Blue */
+              .plot-container {
+                position: absolute;
+                top: 0;
+                right: 100px;
+                width: 1280px;
+                height: 1024px;
+                margin: 1px;
+                border: 1px solid black;
+              }
+        </style>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    function updateColors() {
+        var color1 = 'red';  // Zdefiniuj wartość koloru 1
+        var color2 = 'blue'; // Zdefiniuj wartość koloru 2
+    
+        $.ajax({
+            url: '/update_color',
+            type: 'POST',
+            data: {color1: color1, color2: color2},
+            success: function(response) {
+                console.log('Kolory zaktualizowane');
+                // Tutaj można dodać dowolną logikę po udanej aktualizacji kolorów
+            },
+            error: function(error) {
+                console.log('Błąd podczas aktualizacji kolorów');
+                // Tutaj można dodać dowolną logikę obsługi błędu
+            }
+        });
+    }
+</script>
+<style>
+    body {
+      background-color: #1b305a;
+      font-family: Arial;
+      font-size: 25px;
+    }
+  </style>
+<h1>Bot Testowy</h1>
+<form action="{{ url_for('activate') }}" method="POST">
+<p style="color:yellow">Wybierz ilość botów intercity</p>
+<input max="9" min="0" name="n_intercity" style="width: 10%;" type="number"/>
+<p style="color:yellow">Wybierz ilość powtórzeń botów intercity</p>
+<input max="9" min="0" name="powt_intercity" style="width: 10%;" type="number"/>
+<p style="color:yellow">Wybierz ilość botów billkom</p>
+<input max="9" min="0" name="n_billkom" style="width: 10%;" type="number"/>
+<p style="color:yellow">Wybierz ilość powtórzeń botów billkom</p>
+<input max="9" min="0" name="powt_billkom" style="width: 10%;" type="number"/>
+<p style="color:yellow">Wybierz Tryb pracy Botów</p>
+<select id="bot_mode" name="bot_mode" style="width: 10%;">
+<option value="0">Tryb Intercity + Bilkom</option>
+<option value="1">Tryb Intercity</option>
+<option value="2">Tryb Bilkom</option>
+</select>
+<p style="color:yellow">Wybierz Częstotliwość odświeżania(minuty)</p>
+<input id="minutes" max="60" min="1" name="minutes" style="width: 10% ;" type="number" value="1"/>
+<p style="color:yellow">Czas do następnego uruchomienia: <span id="timer"></span></p>
+<button class="button button1" type="submit">Aktywacja</button>
+<button onclick="event.stopPropagation(); window.location.href='/stop'" style="background-color:red" type="button">Stop</button>
+</form>
+<h1>Status Botów</h1>
+<div>
+<p style="color:white">Stan Intercity</p>
+<div id="element_x" style="background-color: blue ; width:50px; height:50px;"></div>
+</div>
+<div>
+<p style="color:white">Stan Billkom</p>
+<div id="element_y" style="background-color: blue ; width:50px; height:50px;"></div>
+</div>
+<div id="plot_div" style="position: fixed; top: 0; right: 0;"></div>
+<script>
+            var source = new EventSource("/update_data");
+
+            source.onmessage = function(event) {
+              var data = JSON.parse(event.data);
+              // Aktualizuj wykres
+              Plotly.react('plot_div', data.data, data.layout);
+            }
+            </script>
+</head></html>
