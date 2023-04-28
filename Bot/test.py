@@ -10,18 +10,21 @@ import psutil
 import pandas as pd
 import datetime as dt
 ############# Definicje do interpretera
-
-
-Interpreter = 'C:\\Users\\zedko\\Desktop\\Python-PKP\\PKP-BOT-Jeze-Tuptusie\\Scripts\\python.exe'
-Billkom = "C:\\Users\\zedko\\Desktop\\Python-PKP\\PKP-BOT-Jeze-Tuptusie\\Bot\\bilkom.py"
-Intercity = "C:\\Users\\zedko\\Desktop\\Python-PKP\\PKP-BOT-Jeze-Tuptusie\\Bot\\Debbug.py"
-Logi_Bot = 'C:\\Users\\zedko\\Desktop\\Python-PKP\\PKP-BOT-Jeze-Tuptusie\\Logi_Bot'
-Log = 'C:\\Users\\zedko\\Desktop\\Python-PKP\\PKP-BOT-Jeze-Tuptusie\\Log'
+proj_di = sys.argv[6]
+# Względna ścieżka do interpretera Pythona
+Interpreter = os.path.join(proj_di, 'Scripts', 'python.exe')
+# Względna ścieżka do skryptu bilkom.py
+Billkom = os.path.join(proj_di, 'Bot', 'bilkom.py')
+# Względna ścieżka do skryptu Debbug.py
+Intercity = os.path.join(proj_di, 'Bot', 'Debbug.py')
+# Względna ścieżka do katalogu Logi_Bot
+Logi_Bot = os.path.join(proj_di, 'Logi_Bot')
+# Względna ścieżka do katalogu Log
+Log  = os.path.join(proj_di, 'Log')
 ###############################################
 ## Czyszczenie po poprzednich przebiegach
 print("czyszczenie po poprzednich przebiegach")
 folders_to_clear = [Logi_Bot, Log] ### tu wklejyc sciezke do folderu z logami botów 
-
 for folder in folders_to_clear:
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -30,19 +33,6 @@ for folder in folders_to_clear:
                 os.unlink(file_path)
         except Exception as e:
             print(f'nie usunieto {file_path}.  {e}')
-
-#### 
-# do dodania imo
-# boty powinny miec "myslenie" i np jak nie znajdzie polaczen to spróbowac z inna data itp "
-# obsluga przerw technicznych 
-# obsluga bledow dalsza 
-# bot nie usuwa wszystkich plików z poprzednich uruchomien 
-### parametry 
-"" # Parametry wejsciowe Test dla serwis 
-#"""
-#n_intercity=2# ilosc botow dla intercity 
-#n_bilkom =2# ilosc botow dla bilkom 
-#check = 1
 n_intercity=int(sys.argv[1])# ilosc botow dla intercity 
 n_bilkom =int(sys.argv[2])# ilosc botow dla bilkom 
 check = int(sys.argv[3]) # tryb bota ic+bilkom, ic, bilkom
@@ -52,31 +42,6 @@ print("Wybrane Parametry wejsciowe:")
 print("Ilosc botow dla intercity: ",n_intercity,"ilość powtórzeń bota w razie niepowodzenia: ",internal_error_intercity)
 print("Ilosc botow dla bilkom: ",n_bilkom,"ilość powtórzeń bota w razie niepowodzenia: ",internal_error_billkom)
 print("Wybrano case: ",check)
-RozmiarOknax = 1920 # 
-RozmiarOknay = 1080 #
-if(n_intercity>8 or n_intercity<1):
-    n_intercity= np.clip(n_intercity,1, 8)
-    print("Podano zbyt duza ilosc botów dla intercity, zmniejszono do 8")
-if(n_bilkom>8 or n_bilkom<1):
-    n_bilkom= np.clip(n_bilkom,1, 8)
-    print("Podano zbyt duza ilosc botów dla bilkom, zmniejszono do 8")
-#"""
-"""
- #Test manualny 
-n_intercity=2# ilosc botow dla intercity 
-n_bilkom = 2# ilosc botow dla bilkom 17?
-check = 3 # 
-RozmiarOknax = 1920
-RozmiarOknay = 1080
-"""
-#internal error - ilosc powtórzeń bota w razie niepowodzenia"
-#internal_error_billkom = 3 ## ilosc prób bota przed zakonczeniem
-#internal_error_intercity = 3 ## ilosc prób bota przed zakonczeniem
-#"""
-
-#check = 1# intercity i bilkom
-#check = 2 # intercityvv
-#check = 3 # bilkom
 if( check == 1 or check == 3):
     df = pd.read_csv('BillkomDane.csv', sep=',') # nazwa_pliku to nazwa twojego pliku csv
     selected_rows = {}
@@ -94,8 +59,6 @@ if( check == 1 or check == 3):
         h += 1
     for hold in Holder:
         print(hold)
-
-###
 ######### Intercity #########
 Faza_1 = [] 
 Faza_2 = [] 
@@ -131,7 +94,7 @@ if(check == 1):
             proc = subprocess.Popen([Interpreter, 
                                      Intercity, 
                                      filename,str(i),str(internal_error_intercity)])
-            time.sleep(1)  # opóźnienie, aby proces miał czas na utworzenie pliku
+            time.sleep(2)  # opóźnienie, aby proces miał czas na utworzenie pliku
             procarray.append(proc)
         except subprocess.CalledProcessError as exc:
             print(f"Proces botów nr {i} Intercity sie nie uruchomil. "f"Returned {exc.returncode}\n{exc}")
@@ -142,6 +105,7 @@ if(check == 1):
         try:
             proc1 = subprocess.Popen([Interpreter,
                                       Billkom, filename1,str(i),str(Holder[i][0][0][2]),str(Holder[i][0][0][3]),str(internal_error_billkom)])
+            time.sleep(2)  # opóźnienie, aby proces miał czas na utworzenie pliku
             procarray.append(proc1)
         except subprocess.CalledProcessError as exc:
             print(f"Proces botów nr {i} Bilkom sie nie uruchomil. "f"Returned {exc.returncode}\n{exc}")
@@ -176,10 +140,6 @@ print("Procesy uruchomione czekanie na zakonczenie")
 for x in procarray:
     x.wait()
 print("Boty zakonczyly dzialanie")
-#proc.terminate()
-#sys.exit() 
-#time.sleep(10) # poczekanie az wszystkie procesy sie zakoncza 
-#time.sleep(20)
 ### Intercity ### odczyt danych
 if(check ==1 or check == 2):
     print("Inicjowanie Odczytu danych Intercity")
@@ -236,39 +196,17 @@ if(check ==1 or check == 3):
         print("Lista jest pusta. Zaden bot Bilkom nie ukonczyl dzialania pomyslnie.")
         if(check == 3):
             exit()
-# Określenie ilości uruchomień kodu
-
-#for name in (lists):
-    #for x in name:
-        #print(f"{name}: {x}")
-#print("Faza_1:", Faza_1)
-#print("Faza_2:", Faza_2)
-#print("Strona_glowna:", Strona_glowna)
-#print("Wynik_wyszukiwania:", Wynik_wyszukiwania)
-#print("Wybor_pociagu:", Wybor_pociagu)
-#print("Wybor_miejsca:", Wybor_miejsca)
-#print("Podsumowanie:", Podsumowanie)
-#print("Zamowienie:", Zamowienie)
-#print(numbers)
-# obliczenie średniej dla każdej listy
-# wykresy
 #### dane do wizualizacji Intercity ####
 text=[ "Faza_1", "Faza_2", "Strona_glowna", "Wynik_wyszukiwania", "Wybor_pociagu", "Wybor_miejsca", "Podsumowanie", "Zamowienie","Platnosc"]
 j=0
 srednie=[]
-#wykresy = []
 width = 0.35
 fig1 = plt.figure(figsize=(12, 6))
 h=0
 #### dane do wizualizacji Bilkom ####
 text_bilkom=[ "Strona_1", "Strona_2", "Strona_3", "Strona_4"," Czas_Bota"]
 srednie_bilkom=[]
-
 ####
-print(" czasy intercity:")
-print(lists)
-print(" czasy bilkom:")
-print(lists_bilkom)
 fig, (ax1, ax2) = plt.subplots(1, 2)
 if(check ==1 or check == 2):
     ax1.set_title("Próby Intercity")
@@ -420,7 +358,6 @@ if(check == 1 or check == 2 or check ==0):
         except FileNotFoundError:
             continue
     print("usunieto pliki intercity")
-#plt.show()
 if(check == 1 or check == 3 or check ==0):
     for p in range(n_bilkom):
             file_path1 = f"Log\\czasy_Bilkom_{p}.txt" 
@@ -461,7 +398,6 @@ if(check == 1 or check == 3 ):
         with open(Wynik, "w") as file:
             file.write(str(0) + "\n")
 from datetime import datetime
-
 now = datetime.now()
 timer = now.strftime("%H:%M:%S")
 df = pd.DataFrame(dict(date=([timer]*4), value=[len(lists[0]),n_intercity - (len(lists[0])),len(lists_bilkom[0]),n_bilkom-len(lists_bilkom[0])])) # utworzenie dataframe z datami i wartościami

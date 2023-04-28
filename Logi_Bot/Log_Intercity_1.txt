@@ -14,20 +14,30 @@ udalo sie wypelnic pole Data
 wype³nienie pola Godzina
 uda³o siê wype³niæ pole Godzina
 Sprawdzenie poprawnosci wpisanych danych
-======== Rozpoczynam test nr 2 dla bota intercity nr 1 =======
-Inicjalizacja webdrivera bot intercity nr 1
- inicjalizajca strony intercity
-inicjalizacja wyszukiwania
-Oczekiwanie na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))
-udalo sie przejsc do zaawanasowanego wyszukiwania
-Oczekiwanie na element  (Stacja pocz¹tkowa)
-udalo sie wybrac stacje poczatkowa
-Wybór stacji koncowej
-udalo sie wybrac stacje koncowa
-wype³nienie pola Data
-udalo sie wypelnic pole Data
-wype³nienie pola Godzina
-uda³o siê wype³niæ pole Godzina
-Sprawdzenie poprawnosci wpisanych danych
-Bot Intercity nr :1 napotkal blad nieznany b³¹d przy ladowaniu strony po wyszukaniu  
-
+Wyszukiwanie przebieg³o pomyœlnie
+ Czekanie na za³adowanie przycisku WYBIERZ
+Klikniêcie przycisku WYBIERZ
+ sprawdzam czy przycisk ma atrybut przesiadka
+ przycisk nie ma atrybutu przesiadka
+Przescrolluj do przycisku Dalej
+Wybrano przesiadke
+Klikam przycisk dalej
+ szukam pola imie i nazwisko
+ wype³niam pole imie i nazwisko
+ wype³niono pole imie i nazwisko
+ szukam przycisku dalej 2
+ klikam przycisk dalej 2
+ kliknieto przycisk dalej 2
+ szukam przycisku  kup bez rejestracji
+ kliknieto przycisk kup bez rejestracji
+wypelniam pola formularza
+wypelniono pola formularza
+kliknam przycisk polityka prywatnosci
+kliknieto przycisk polityka prywatnosci
+kliknam przycisk dalej 3
+kliknieto przycisk dalej 3
+kliknam przycisk Zatwierdz
+kliknieto przycisk zatwierdz
+ Klikam przycisk kupuje i place
+przekierowanie na przelewy24 zadzia³a³o prawid³owo
+Zakonczono test pomyslnie dla bota nr 1

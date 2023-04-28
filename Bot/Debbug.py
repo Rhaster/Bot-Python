@@ -8,10 +8,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException,TimeoutException, UnexpectedAlertPresentException, ElementNotInteractableException
-import socket
 import holidays
 import re
-import os
 import sys
 from selenium.webdriver import Firefox, FirefoxOptions
 
@@ -82,9 +80,11 @@ def check_for_access_denied(driver):
         match = re.search(r"Access Denied", page_source)
         if match:
             Logi.append("wykryto komunikat Access Denied")
+            return True
+        else:
             return False
     except NoSuchElementException:
-        return True
+        return False
 
 
 ##### Konfiguracja webdrivera oraz ustawienie liczników czasu
@@ -125,11 +125,15 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
     try:
         try:
             Logi.append("Oczekiwanie na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))")
+            s = time.time()
             element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'a.btn-link.btn-adv-search')))###
             element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a.btn-link.btn-adv-search'))) ### ZMIANA  6-04-2023
+            print("Czas oczekiwania na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))", time.time() - s)
             element.click()
             Logi.append("udalo sie przejsc do zaawanasowanego wyszukiwania")
         except (NoSuchElementException, TimeoutException, ElementNotInteractableException):
+            print("Nie znaleziono elementu 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie )) oczekowano")
+            print("Czas oczekiwania na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))", time.time() - s)
             if(check_for_access_denied(driver)):
                     Logi.append("wykryto komunikat Access Denied")
                     blad = "Znaleziono komunikat: Access Denied"
@@ -139,7 +143,9 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
                 Logi.append("Nie znaleziono elementu 'a.btn-link.btn-adv-search")
                 #print("Nie znaleziono elementu 'a.btn-link.btn-adv-search")
                 blad="Nie znaleziono elementu 'a.btn-link.btn-adv-search"
+                driver.save_screenshot(f'intercity{NR_BOTA}.png')
                 driver.close()
+                
                 return False
         # wypełnienie pola Stacja Początkowavvvv
         try:

@@ -15,10 +15,16 @@ import sys
 from selenium.webdriver import Firefox, FirefoxOptions
 
 ############################## BOT BILLKOM V1.0 ########################################
-# TODO
-# Dodac obsluge moj bilet
-############################## BOT BILLKOM V1.0 ########################################
 
+############################## BOT BILLKOM V1.0 ########################################
+""" # Debugowanie
+output_file = "xaxa.txt"
+NR_Bota= 5
+A = "Olsztyn Zachodni"
+B = "Warszawa Centralna"
+internal_error=0
+oczekiwanie_web_drivera= 8 # w sekundach
+""" 
 ## Argumenty podawane z poziomu cmd
 output_file = sys.argv[1]# "xd.txt"
 NR_Bota= sys.argv[2]
@@ -42,23 +48,8 @@ def GetNextDay(dzisiaj,pl_holidays):
             break
         i += 1
     return (dzisiaj + timedelta(days=i)).strftime('%d/%m/%y')
-
-## inne dane 
-#A="Olsztyn Likusy"
-#B="Ostrawa Gł./Ostrava hl.n."
-#######INFORMACJA
-#v
-#                 Bot Działa tylko na połączenia bez przesiadek
-#                 specjalnie wybiera takie  połączenia które są dostępne  oraz bez przesiadek 
-#
-#   Formularz 1 do usprawnienia wymaga zastapienie time.sleep() jakism wait.unitl() lecz nie wiem jak
-#
-#dane vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 date = GetNextDay(dzisiaj,pl_holidays)
 times = "10:30" 
-#A= "Warszawa Centralna"
-#B= "Szczecin Główny"
-
 imie = "Jan"
 nazwisko = "Kowalski"
 email = "jan.kowalski@example.com"
@@ -77,6 +68,7 @@ def retry():
     StartBota=time.time()
 retry()
 def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
+    print("Start Bota nr ",NR_Bota)
     global blad
     # Strona Pierwsza Wyszukanie Okien do wpisania
     # inicjalizacja webdrivera
@@ -85,8 +77,8 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
         try:
             Logi.append(" Inicjacja przegladarki firefox")
             #driver = webdriver.Firefox()
-            driver = webdriver.Firefox(options=options)
-            driver.set_window_position(-2000, 0)
+            driver = webdriver.Firefox(options=options) ### to usunac gdy chcemy zobaczyc przegladarke (options=options)  => ()
+            driver.set_window_position(0, 0)
             start_time = time.time()
             # inicjalizacja waitera 
             wait = WebDriverWait(driver,oczekiwanie_web_drivera)
@@ -123,12 +115,12 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             # Pierwsze pole 
             #time.sleep(1) # czas na załadowanie się listy
             Logi.append(" Ładowanie elementów strony głównej ")
-            time.sleep(2) # czas na załadowanie się listy
+            time.sleep(1) # czas na załadowanie się listy
             begging_station = wait.until(EC.presence_of_element_located((By.XPATH,"//*[@id='fromStation']")))
             begging_station.click()
             begging_station.clear()
             begging_station.send_keys(A)
-            time.sleep(2)  # czas na załadowanie się listy
+            time.sleep(1)  # czas na załadowanie się listy
             begging_station.send_keys(Keys.ARROW_DOWN)
             begging_station.send_keys(Keys.ENTER)
             Logi.append(" Udało się załadować element stacji poczatkowej")
@@ -137,7 +129,7 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             end_station.click()
             end_station.clear()
             end_station.send_keys(B)
-            time.sleep(2)  # czas na załadowanie się listy
+            time.sleep(1)  # czas na załadowanie się listy
             end_station.send_keys(Keys.ARROW_DOWN)
             end_station.send_keys(Keys.ENTER)
             Logi.append(" Udalo sie zaladować element stacji koncowej")
@@ -145,12 +137,12 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             # data
             time.sleep(1)
             driver.execute_script("arguments[0].removeAttribute('readonly',0);", date_element)
-            time.sleep(2)  # czas na załadowanie się listy
+            time.sleep(1)  # czas na załadowanie się listy
             date_element.click()
             date_element.clear()
             date_element.send_keys(date)
             
-            time.sleep(2)  # czas na załadowanie się listy
+            time.sleep(1)  # czas na załadowanie się listy
             date_element.send_keys(Keys.ENTER)
             Logi.append(" Udalo sie zaladować element DATA")
             #czas
@@ -173,10 +165,11 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             return False
         #klikniecie przycisku wyszukaj
         try:
-            time.sleep(1)
+            time.sleep(4)
             start_time = time.time()
             Logi.append(" Klikniecie przycisku wyszukaj polaczenia ")
             driver.find_element(By.XPATH,("//*[@id='search-btn']")).click()
+            time.sleep(5)
         except NoSuchElementException:
             Logi.append(" Nie udalo sie kliknac przycisku wyszukaj polaczenia Strona Glowna ")
             blad = "Nie udało się kliknąć przycisku wyszukaj Strona glowna"
@@ -185,41 +178,41 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
         # Strona druga
         try:
             Logi.append(" Wyszukanie polaczenia dostepnego z przesiadkami lub bez ")
-            elements = wait.until(EC.presence_of_all_elements_located((By.XPATH,"//li[@class='el' and @data-trip and @data-id]")))
-            Logi.append(" znaleziono polaczenia")
             tabelaczasow.append(time.time() - start_time)
-            for e in elements:
-                tr_elements = e.find_elements(By.XPATH,".//tr[@class='tr-services']")
-                if(len(tr_elements)>=1): ############# ZMIANA  z == 1 na >=1 odpowiada za przesiadki
-                    Logi.append(" znaleziono polaczenie sprawdzanie czy jest dostepne ")
-                    try:
-                        span_element = e.find_element(By.XPATH,".//span[@class='text' and text()='Niedostępne']")
-                        Logi.append(" polaczenie jest niedostepne  szukam dalej")
-                    except NoSuchElementException:
-                        Logi.append(" znaleziono polaczenie jest dostepne przechodze dalej ")
-                        wybierz = e
-                        break
+            ul_elements = driver.find_elements(By.CSS_SELECTOR, "ul#trips.col-xs-12.list")
+            # Wyświetlenie liczby znalezionych elementów
+            #print("Liczba znalezionych elementów: ", len(ul_elements))
+            przycisk = 1 
+            # Wyszukanie przycisków i kliknięcie ich
+            for ul in ul_elements:
+                try:
+                    przycisk = ul.find_element(By.XPATH, "//button[@class='btn submit-btn' and @type='submit' and @onclick='checkDisabled(event, this);']")
+                    wait.until(EC.element_to_be_clickable(przycisk))
+                except:
+                    pass
+                break
+            start_time1=    time.time()
+            if(przycisk == 1):
+                #print("nie znaleziono dostepnych polaczen Strona druga")
+                Logi.append(" Nie udalo sie znalezc przycisku dostepnych polaczen Strona druga ")
+                blad = "Nie udalo sie znalezc przycisku dostepnych polaczen Strona druga "
+                driver.close()
+                return False
             try:
                 Logi.append(" sprawdzam czy poprawnie zaladowalo przycisk i czy jest dostepny ")
-                wait.until(EC.presence_of_element_located((By.XPATH,"//button[@class='btn submit-btn' and @type='submit' and @onclick='checkDisabled(event, this);']")))
+                przycisk.click()
             except TimeoutException:
                 Logi.append(" nie udalo sie zaladowac strony 2 ")
                 blad = "Nie udało się załadować  Strony 2"
                 driver.close()
                 return False
-            Logi.append(" sprawdzam czy przycisk wybranego polaczenia jest na stronie ")
-            if 'wybierz' in locals() or 'wybierz' in globals():
-                start_time1=time.time()
-                wybierz.find_element(By.XPATH,"//button[@class='btn submit-btn' and @type='submit' and @onclick='checkDisabled(event, this);']").click()
-                Logi.append(" udalo sie kliknac przycisk kup na stronie 2  ")
-            else:
-                Logi.append(" nie ma przycisku wybranego polaczenia ")
-                blad = "nie ma przejazdów bez przesiadek lub nie ma ich wgl"
-                driver.close()
-                return False
             try:
                 Logi.append(" sprawdzam czy strona nie wykryla zbyt wielu polaczen  ")
+                #driver.save_screenshot("screenshot1.png")
                 przycisk = driver.find_element(By.ID,"new-order")
+                time.sleep(5)
+                driver.execute_script("arguments[0].scrollIntoView(true);", przycisk)  
+                #driver.save_screenshot("screenshot.png")
                 # Sprawdzenie, czy przycisk jest klikalny
                 if przycisk.is_enabled():
                     Logi.append(" strona wykryla klikam przycisk dalej  ")
@@ -376,6 +369,7 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
         try:
             if(len(driver.window_handles)>0):
                 driver.close()
+            return False
         except:
             pass
         return False
@@ -386,12 +380,14 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
                     file.write(str(x) + "\n")
 def ender(): ## funkcja zamykajaca program z bledem
     print(f"Bot Bilkom nr :{NR_Bota} napotkal blad " + str(blad) + "  \n")
-## Mechanizm ponownego podejscia po bledzie  przedluzy dzialanie ale 
+## Mechanizm ponownego podejscia po bledzie  
 a=0
 if(a==internal_error):
     x=bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date)
-while a != internal_error:
+    a+=1
+while a <= int(internal_error):
     Logi.append(f"Bot nr {NR_Bota} wykonuje ponowne podejscie do strony nr {a} ")
+    print("Bot Billkom nr {NR_Bota} wykonuje ponowne podejscie do strony nr {a} ")
     retry()
     x=bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date)
     if(x == True):

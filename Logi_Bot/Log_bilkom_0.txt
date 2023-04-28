@@ -3,12 +3,6 @@ Bot bilkom nr 0 Start
  Inicjacja przegladarki firefox
  Inicjacja strony billkom.pl
  Zamykanie reklamy 
- Nie uda³o siê za³adowac strony g³ównej 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 1 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
  £adowanie elementów strony g³ównej 
  Uda³o siê za³adowaæ element stacji poczatkowej
  Udalo sie zaladowaæ element stacji koncowej
@@ -16,139 +10,26 @@ Bot bilkom nr 0 Start
  Udalo sie zaladowaæ element Time
  Klikniecie przycisku wyszukaj polaczenia 
  Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 2 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 3 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 4 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 5 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 6 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 7 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 8 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 9 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 10 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 11 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- Zamykanie reklamy 
- £adowanie elementów strony g³ównej 
- Uda³o siê za³adowaæ element stacji poczatkowej
- Udalo sie zaladowaæ element stacji koncowej
- Udalo sie zaladowaæ element DATA
- Udalo sie zaladowaæ element Time
- Klikniecie przycisku wyszukaj polaczenia 
- Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
- nie uda³o sie znalezc polaczen lub strona sie nie zaladowala 
-Bot nr 0 wykonuje ponowne podejscie do strony nr 12 
-Bot bilkom nr 0 Start
- Inicjacja przegladarki firefox
- Inicjacja strony billkom.pl
- nie uda³o sie za³adowac bilkom.pl
+ sprawdzam czy poprawnie zaladowalo przycisk i czy jest dostepny 
+ sprawdzam czy strona nie wykryla zbyt wielu polaczen  
+ strona nie wykryla zbyt wielu polaczen przechodze dalej  
+ sprawdzam czy jest popup o zmianie trasy 
+Nie znaleziono okna z ostrze¿eniem.
+ sprawdzam czy jestem na nastepnej stronie 3  
+  jestem na stronie 3   
+ sprawdzam czy jest przycisk dalej i klikam go 
+ sprawdzam czy sa elementy do wypelnienia na stronie 4
+ wykrylem pierwsze pole przechodze do pobierania ich
+ wykryto wszystkie formularze strony 4 przechodze dalej 
+ znalazlem wszystkie formularzy strony 4 przechodze do ich wypeniania
+ udalo sie wypelnic elementy formularza strony 4 
+Szukam przycisku dalej na stronie 4 
+czekam na zaladowanie strony 5  
+udalo sie zaladowac strone 5  
+szukam elementuw na stronie 5 do klikniecia
+znalazlem elementy do klikniecia strona 5 
+klikam w zaladowane elementy strony 5 
+przechodze dalej klikajac przycisk platnosc 
+Czekam na zaladowanie strony 6 
+zaladowano strone 6 sprawdzam czy poprawnie jest wyswietlony link
+Bot nr 0 ukonczyl zadanie

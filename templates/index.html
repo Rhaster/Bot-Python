@@ -96,15 +96,7 @@
               
               .button1 {background-color: #4CAF50;} /* Green */
               .button2 {background-color: #008CBA;} /* Blue */
-              .plot-container {
-                position: absolute;
-                top: 0;
-                right: 100px;
-                width: 1280px;
-                height: 1024px;
-                margin: 1px;
-                border: 1px solid black;
-              }
+              
         </style>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
@@ -166,13 +158,15 @@
 <div id="element_y" style="background-color: blue ; width:50px; height:50px;"></div>
 </div>
 <div id="plot_div" style="position: fixed; top: 0; right: 0;"></div>
+<div id="plot_div1" style="position: fixed; top: 0; right: 800px;"></div>
 <script>
-            var source = new EventSource("/update_data");
-
-            source.onmessage = function(event) {
-              var data = JSON.parse(event.data);
-              // Aktualizuj wykres
-              Plotly.react('plot_div', data.data, data.layout);
-            }
-            </script>
+    var source = new EventSource("/update_data");
+    source.addEventListener("message", function(event) {
+        var data = JSON.parse(event.data);
+        console.log(data.data); // odczytaj dane pierwszego wykresu
+        console.log(data.data1); // odczytaj dane drugiego wykresu
+        Plotly.react('plot_div', data.data, data.layout);
+        Plotly.react('plot_div1', data.data1, data.layout1);
+    });
+  </script>
 </head></html>
