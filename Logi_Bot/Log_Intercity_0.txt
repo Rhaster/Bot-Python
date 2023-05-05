@@ -14,6 +14,22 @@ udalo sie wypelnic pole Data
 wype³nienie pola Godzina
 uda³o siê wype³niæ pole Godzina
 Sprawdzenie poprawnosci wpisanych danych
+nieznany b³¹d przy ladowaniu strony po wyszukaniu
+======== Rozpoczynam test nr 2 dla bota intercity nr 0 =======
+Inicjalizacja webdrivera bot intercity nr 0
+ inicjalizajca strony intercity
+inicjalizacja wyszukiwania
+Oczekiwanie na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))
+udalo sie przejsc do zaawanasowanego wyszukiwania
+Oczekiwanie na element  (Stacja pocz¹tkowa)
+udalo sie wybrac stacje poczatkowa
+Wybór stacji koncowej
+udalo sie wybrac stacje koncowa
+wype³nienie pola Data
+udalo sie wypelnic pole Data
+wype³nienie pola Godzina
+uda³o siê wype³niæ pole Godzina
+Sprawdzenie poprawnosci wpisanych danych
 Wyszukiwanie przebieg³o pomyœlnie
  Czekanie na za³adowanie przycisku WYBIERZ
 Klikniêcie przycisku WYBIERZ

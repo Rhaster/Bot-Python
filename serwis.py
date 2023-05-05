@@ -11,7 +11,7 @@ import pandas as pd
 import json
 from bs4 import BeautifulSoup
 import configparser
-
+import datetime as dt
 app = Flask(__name__,template_folder='templates')
 #################### Definicje DO Interpretera ####################v
 proj_dir = os.path.dirname(__file__)
@@ -77,7 +77,8 @@ def activate():
     flaga=0
     while True:
         Start = time.time()
-        if(bot_mode == "0" and flaga==1):
+        aktualna_godzina = dt.datetime.now().strftime("%H:%M")
+        if(bot_mode == "0" and flaga==1) and aktualna_godzina >= "00:30": ## dodanie obslugi przerwy technicznej od 0:00 do 0:30
             time.sleep(1)
             print("aktywacja procesu Intercity + billkom")
             t=subprocess.Popen([Interpreter, 

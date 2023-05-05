@@ -14,7 +14,7 @@ Bot bilkom nr 1 Start
  sprawdzam czy strona nie wykryla zbyt wielu polaczen  
  strona nie wykryla zbyt wielu polaczen przechodze dalej  
  sprawdzam czy jest popup o zmianie trasy 
-Klikniêto przycisk ZatwierdŸ. w popupie 
+Nie znaleziono okna z ostrze¿eniem.
  sprawdzam czy jestem na nastepnej stronie 3  
   jestem na stronie 3   
  sprawdzam czy jest przycisk dalej i klikam go 
