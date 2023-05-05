@@ -13,15 +13,10 @@ import re
 import sys
 from selenium.webdriver import Firefox, FirefoxOptions
 
+
 ################### Bot Intercity ############################
-# Obsluga bledow Acces Denied zrobione 
-# Wyszukiwanie nast dnia roboczego zrobione
-# Wyszukiwanie po godzinach zrobione
-# obsluga bledow zrobione czesciowo
+
 ################### Bot Intercity ############################
-#if len(sys.argv) < 2:
-    ##print("Usage: python Debbug.py <output_file>")
-    #sys.exit(1)
 output_file = sys.argv[1]
 NR_BOTA= sys.argv[2]
 internal_error = sys.argv[3]
@@ -72,8 +67,7 @@ tabelaczasow = []
 global Logi
 Logi = []
 #### Konfig 
-# pozycja okna
-# rozmiar okna
+### Funkcja sprawdzajaca czy strona odrzuca polaczenie
 def check_for_access_denied(driver):
     try:
         page_source = driver.page_source
@@ -86,7 +80,20 @@ def check_for_access_denied(driver):
     except NoSuchElementException:
         return False
 
-
+def WyjscieBledu(Komunikat,driver,log): # wyjscie bota po napotkaniu bledu
+    global Logi
+    global blad
+    blad = Komunikat
+    #print(Komunikat)
+    Logi.append(log)
+    now = datetime.now()
+    a = now.strftime("%d_%H_%M")
+    try:
+        xe=f"Error_Ic/{str(a)}_blad_{str(blad)}.png"
+        driver.save_screenshot(xe)
+    except Exception as e:
+        print("Wystąpił błąd podczas zapisywania zrzutów ekranu:", e)
+    return False
 ##### Konfiguracja webdrivera oraz ustawienie liczników czasu
 Logi.append(f"Bot Intercity nr { NR_BOTA} rozpoczyna działanie")
 def initilize():
@@ -114,7 +121,6 @@ def initilize():
     #driver.minimize_window()
 global blad
 blad = ""
-##### DO ZROBIENIA ZMIENNA BLAD I DOKONCZENIE TEGO ORAZ BIKOM
 def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połączenia
     # kontener na bledy
     global blad
@@ -128,26 +134,22 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
             s = time.time()
             element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'a.btn-link.btn-adv-search')))###
             element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a.btn-link.btn-adv-search'))) ### ZMIANA  6-04-2023
-            print("Czas oczekiwania na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))", time.time() - s)
+            #print("Czas oczekiwania na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))", time.time() - s)
             element.click()
             Logi.append("udalo sie przejsc do zaawanasowanego wyszukiwania")
         except (NoSuchElementException, TimeoutException, ElementNotInteractableException):
             print("Nie znaleziono elementu 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie )) oczekowano")
             print("Czas oczekiwania na element 'a.btn-link.btn-adv-search ( Zaawansowane wyszukiwanie ))", time.time() - s)
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
-                Logi.append("Nie znaleziono elementu 'a.btn-link.btn-adv-search")
                 #print("Nie znaleziono elementu 'a.btn-link.btn-adv-search")
                 blad="Nie znaleziono elementu 'a.btn-link.btn-adv-search"
-                driver.save_screenshot(f'intercity{NR_BOTA}.png')
-                driver.close()
-                
+                x = WyjscieBledu(blad,driver,blad)
                 return False
-        # wypełnienie pola Stacja Początkowavvvv
+        # wypełnienie pola Stacja Początkowa
         try:
             Logi.append("Oczekiwanie na element  (Stacja początkowa)")
             wait.until(EC.visibility_of_element_located((By.NAME, "stname[0]")))
@@ -188,19 +190,16 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
             Logi.append("udało się wypełnić pole Godzina")
         except TimeoutException or NoSuchElementException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
-                Logi.append("Nie znaleziono elementu do wypełnienia formularza  wyszukiwanie polaczen")
                 blad="Nie znaleziono elementu do wypełnienia formularza"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         except:
-            Logi.append("Nie znaleziono elementu do wypełnienia formularza  wyszukiwanie polaczen")
             blad="Nie znaleziono elementu do wypełnienia formularza"
-            driver.close()
+            x = WyjscieBledu(blad,driver,blad)
             return False
         ### Sprawdzenie poprawnosci wpisanych danych 
         try:
@@ -209,16 +208,14 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
                 ##print("Stacja początkowa nie zgadza się")
                 blad = "Stacja początkowa nie zgadza się"
                 Logi.append("Stacja początkowa nie zgadza się")
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
             if(stacja_koncowa.get_attribute("value") != B):
-                Logi.append( "Stacja końcowa nie zgadza się")
                 blad = "Stacja końcowa nie zgadza się"
                 ##print("Stacja końcowa nie zgadza się")
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
             if(data.get_attribute("value") != date):
-                Logi.append( "Data nie zgadza się")
                 blad = "Data nie zgadza się"
                 #print("Data nie zgadza się")
                 return False
@@ -229,15 +226,13 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
                 return False
         except NoSuchElementException or TimeoutException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
                 #print("Nie znaleziono elementu do sprawdzenia poprawności danych")
                 blad="Nie znaleziono elementu do sprawdzenia poprawności danych"
-                Logi.append( "Nie znaleziono elementu do sprawdzenia poprawności danych")
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         # kliknięcie przycisku Szukaj
         try:
@@ -247,13 +242,12 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
             driver.execute_script("arguments[0].click();", szukaj)
         except NoSuchElementException or TimeoutException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
                 #print("Nie znaleziono przycisku Szukaj")
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         ## Czekanie na załadowanie strony i elementu "WYBIERZ"
         try:
@@ -268,7 +262,7 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
                 if text == "Nie znaleziono połączeń.":
                     #print("System Nie znalazl połączenia")
                     blad = "System Nie znalazl połączenia"
-                    driver.close()
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
                 else:
                     raise NoSuchElementException
@@ -280,13 +274,12 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
                     yes_button.click()
                 except  NoSuchElementException: ## dodac obsluge bledu Access Denied
                     if(check_for_access_denied(driver)):
-                        Logi.append("wykryto komunikat Access Denied")
-                        blad = "Znaleziono komunikat: Access Denied"
-                        driver.close()
+                        blad = "Znaleziono komunikat Access Denied"
+                        x = WyjscieBledu(blad,driver,blad)
                         return False
                     else:
                         blad="nieznany błąd przy ladowaniu strony po wyszukaniu"
-                        driver.close()
+                        x = WyjscieBledu(blad,driver,blad)
                         return False
         # mierzenie czasu ladowania strony
         driver.execute_script("return window.onload")
@@ -300,7 +293,7 @@ def Intercity_Stage_1(A, B, date, times, driver, wait,tab): ## wyszukanie połą
         return True
     except:
         blad="nieznany błąd Stage_1"
-        driver.close()
+        x = WyjscieBledu(blad,driver,blad)
         return False
 def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia oraz złozenie zamówienia
     global blad
@@ -311,14 +304,13 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             buttons = wait.until(EC.presence_of_all_elements_located((By.XPATH,('//li[@class="active"]//div[@msg="WYBIERZ"]')))) 
         except TimeoutException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
                 Logi.append( "Nie znaleziono przycisku WYBIERZ")
                 blad="nieznany błąd przy ladowaniu strony po wyszukaniu"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         try:
             Logi.append( "Kliknięcie przycisku WYBIERZ")
@@ -335,7 +327,7 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
                     break
         except :
             blad="nieznany błąd przy ladowaniu polaczen"
-            driver.close()
+            x = WyjscieBledu(blad,driver,blad)
             return False
         # przescrolluj do przycisku "dalej"
         try:
@@ -363,14 +355,12 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             button1.click()
         except NoSuchElementException or TimeoutException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
-                Logi.append( "Nie znaleziono przycisku dalej 1")
                 blad="Nie znaleziono przycisku dalej 1"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         # dodana opcja wykrycia przesiadki
         # wypełnij pole imie i nazwisko
@@ -385,14 +375,13 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             Logi.append( " wypełniono pole imie i nazwisko")
         except TimeoutException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
                 #print("Nie znaleziono pola imie i nazwisko")
                 blad="Nie znaleziono pola imie i nazwisko"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         # kliknij przycisk dalej
         try:
@@ -410,14 +399,12 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             Logi.append( " kliknieto przycisk kup bez rejestracji")
         except NoSuchElementException or TimeoutException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
-                Logi.append( "Nie znaleziono przycisku dalej 2 ")
                 blad="Nie znaleziono przycisku dalej 2 "
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         # wypelnij pola formularza
         try:
@@ -429,13 +416,12 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             Logi.append(    "wypelniono pola formularza")
         except NoSuchElementException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
                     blad = "Nie znaleziono pola formularza"
-                    driver.close()
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
         # kliknij informacje o polityce prywatnosci
         try:
@@ -444,14 +430,13 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             Logi.append( "kliknieto przycisk polityka prywatnosci")
         except NoSuchElementException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
                 Logi.append( "Nie znaleziono przycisku akceptacji polityki prywatnosci")
                 blad = "Nie  znaleziono przycisku akceptacji polityki prywatnosci"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         # kliknij przycisk "dalej" 
         try:
@@ -465,28 +450,24 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             tabelaczasow.append(time.time() - start_time)
         except NoSuchElementException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
-                Logi.append( "Nie znaleziono przycisku dalej 3")
                 blad = "Nie znaleziono przycisku dalej 3"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         try: 
             Logi.append( "kliknam przycisk Zatwierdz")
             driver.find_element(By.XPATH, '//input[@name="actlogin" and @value="Zatwierdź"]').click()
         except NoSuchElementException:
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
-                #print("Nie znaleziono przycisku zatwierdz")
                 blad = "Nie znaleziono przycisku zatwierdz"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False    
         try:
             Logi.append( "kliknieto przycisk zatwierdz")
@@ -499,18 +480,16 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
                 element = driver.find_element(By.XPATH,"//td[contains(text(), '{}')]".format(text_to_find))
                 Logi.append( "system zablokował mozliwosc rezerwacji przez przekroczenie limitu 5 transakcji")
                 blad = "system zablokował mozliwosc rezerwacji przez przekroczenie limitu 5 transakcji"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return True 
             except NoSuchElementException:
                 if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
                 else:
-                    Logi.append( "Nie znaleziono przycisku wyboru platnosci")
                     blad = "Nie znaleziono przycisku wyboru platnosci"
-                    driver.close()
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
         try:
             Logi.append( " Klikam przycisk kupuje i place")
@@ -519,9 +498,8 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
             if button.is_enabled():
                 button.click()
         except NoSuchElementException:
-            Logi.append( "Nie znaleziono przycisku kupuje i place")
             blad = "Nie znaleziono przycisku kupuje i place"
-            driver.close()
+            x = WyjscieBledu(blad,driver,blad)
             return False
         try:
             wait.until(EC.url_contains('przelewy24'))
@@ -534,26 +512,22 @@ def Intercity_Stage_2(imie,nazwisko,email,driver,wait): ## wybór połączenia o
                 print(f"Bot  Intercity  nr {NR_BOTA} pomyslnie zlozył zamówienie na Intercity.pl")
                 return True
             else:
-                Logi.append( "przycisk przekierowania nie zadziałał prawidłowo")
                 blad = "przycisk przekierowania nie zadziałał prawidłowo"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
         except NoSuchElementException or UnexpectedAlertPresentException or TimeoutException:  ## Spytac sie jak powinno to obsłuzyc 
             if(check_for_access_denied(driver)):
-                    Logi.append("wykryto komunikat Access Denied")
-                    blad = "Znaleziono komunikat: Access Denied"
-                    driver.close()
+                    blad = "Znaleziono komunikat Access Denied"
+                    x = WyjscieBledu(blad,driver,blad)
                     return False
             else:
-                Logi.append( "Nie znaleziono przycisku  kupuje i place")
                 #print("Nie znaleziono przycisku  kupuje i place")
                 blad = "Nie znaleziono przycisku kupuje i place"
-                driver.close()
+                x = WyjscieBledu(blad,driver,blad)
                 return False
     except Exception as e :
-        Logi.append("Nieznany blad stage_2")
         blad = "Nieznany blad stage_2" + str(e) 
-        driver.close()
+        x = WyjscieBledu(blad,driver,blad)
         return False
 
 def ender(): ## funkcja zamykajaca program z bledem
@@ -576,7 +550,7 @@ while(a <= integral):
         Logi.append("Nieznany blad stage_1")
         blad = "Znaleziono komunikat: " + str(e)
         a+=1
-        driver.close()
+        x = WyjscieBledu(blad,driver,blad)
         continue
     start_time_stage_2=time.time()
     if(Stage_1==True):

@@ -1,6 +1,6 @@
 Bot nr 1 wykonuje ponowne podejscie do strony nr 0 
 Bot bilkom nr 1 Start
- Inicjacja przegladarki firefox
+ Inicjacja przegladarki firefox 
  Inicjacja strony billkom.pl
  Zamykanie reklamy 
  £adowanie elementów strony g³ównej 
