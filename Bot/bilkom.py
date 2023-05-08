@@ -21,14 +21,13 @@ from datetime import datetime
 # Debugowanie
 """
 output_file = "xaxa.txt"
-NR_Bota= 5
+NR_Bota= piatej
 A = "Olsztyn Zachodni"
 B = "Warszawa Centralna"
 internal_error=0
 oczekiwanie_web_drivera= 8 # w sekundach
 """
 ## Argumenty podawane z poziomu cmd
-
 output_file = sys.argv[1]# "xd.txt"
 NR_Bota= sys.argv[2]
 A = sys.argv[3]
@@ -37,12 +36,13 @@ internal_error=sys.argv[5]
 oczekiwanie_web_drivera= 8 # w sekundach
 #Przewoznik = sys.argv[7]
 
+
 ###################
 pl_holidays = holidays.PL(years=[2023])
 dzisiaj = datetime.now()
 global Logi
 Logi = []
-Oczekiwanie = 3
+Oczekiwanie = 2
 # Sprawdzamy, czy dzisiaj jest dniem roboczym
 def GetNextDay(dzisiaj,pl_holidays):
     i = 1
@@ -64,6 +64,7 @@ options = FirefoxOptions()
 options.add_argument("--headless")
 options.set_capability("moz:firefoxOptions", {"args": ["-headless"]})
 global driver
+Logi.append("Testowane polaczenia to: "+A+"-"+B)
 def retry(): ## ponowne podejscie do przejscia strony 
     global tabelaczasow
     tabelaczasow = []
@@ -75,12 +76,14 @@ def WyjscieBledu(Komunikat,driver,log): # wyjscie bota po napotkaniu bledu
     global Logi
     global blad
     blad = Komunikat
-    print(Komunikat)
-    Logi.append(log)
+    print(f"Wystąpił błąd podczas działania bota billkom nr {NR_Bota}: {Komunikat}")
+    #print(Komunikat)
+    sk = Komunikat[:20] ## Nieznane bledy rozwalaja zapisywanie screeenów dlatego skracam je do 20 znaków
+    Logi.append(log) 
     now = datetime.now()
     a = now.strftime("%d_%H_%M")
     try:
-        xe=f"Error_Bilkom/{str(a)}_blad_{str(blad)}.png"
+        xe=f"Error_Bilkom/{str(a)}_blad_{str(sk)}.png" 
         driver.save_screenshot(xe)
     except Exception as e:
         print("Wystąpił błąd podczas zapisywania zrzutów ekranu:", e)
@@ -95,7 +98,7 @@ def wybierz_polaczenie(driver,wait,n): ### Funkcja odpowiada za wybranie odpowie
             przycisk = ul.find_element(By.XPATH, ".//button[@class='btn submit-btn' and @type='submit' and @onclick='checkDisabled(event, this);']")
             wait.until(EC.element_to_be_clickable(przycisk))
             a+=1
-            flag = True
+            flag = True # Flaga jest przypisywana po delkaraacji przycisku wiec kompilator nie wie co mówi 
         except Exception as e :
             a+=1
             pass
@@ -105,10 +108,27 @@ def wybierz_polaczenie(driver,wait,n): ### Funkcja odpowiada za wybranie odpowie
             break
     if flag==True:
         #print("Znaleziono przycisk")
-        return przycisk 
+        return przycisk  # Flaga jest przypisywana po delkaracji przycisku wiec kompilator nie wie co mówi  
     else:
         #print("Nie znaleziono przycisku")
         return 1 # nie znaleziono przycisku
+def Captacha(driver): # funkcja odpowiadajaca za obsluge captchy
+    global Logi
+    try:
+        time.sleep(2)
+        frame = driver.find_element(By.XPATH,'//iframe[@title="reCAPTCHA"]')
+        driver.switch_to.frame(frame)
+        element = driver.find_element(By.XPATH,'//span[@id="recaptcha-anchor"]')
+        element.click()
+        driver.switch_to.default_content()
+        driver.save_screenshot("captcha.png")
+        Logi.append(" Element captcha istnieje na stronie ")
+        print("Element captcha istnieje na stronie bot nr ",NR_Bota)
+        time.sleep(8)# czas na odblokowanie przycisku wyszukaj 
+        return 1
+    except NoSuchElementException:
+        print("Element captcha nie istnieje na stronie")
+        return 2
 retry()
 def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
     #print("Start Bota nr ",NR_Bota)
@@ -121,6 +141,7 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
         try:
             Logi.append(" Inicjacja przegladarki firefox ")
             driver = webdriver.Firefox(options=options) ### to usunac gdy chcemy zobaczyc przegladarke (options=options)  => ()
+            driver.set_window_size(1920,1080) # rozdzielczosc 
             driver.set_window_position(0, 0)
             start_time = time.time()
             # inicjalizacja waitera 
@@ -191,6 +212,18 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             time_element.send_keys(Keys.ENTER)
             Logi.append(" Udalo sie zaladować element Time")
         except   StaleElementReferenceException:
+            b = Captacha(driver)
+            if(b==1):
+                    print("Wykryto ochrone antybotowa Captcha przy wpisywaniu danych do formularza nr bota :", NR_Bota)
+                    Logi.append(" Wykryto ochrone antybotowa Captcha przy wpisywaniu danych do formularza")
+                    button = driver.find_element(By.XPATH,("//*[@id='search-btn']"))
+                    button.click()
+                    przycisk = wybierz_polaczenie(driver,wait ,7)
+                    time.sleep(2)
+            else:
+                blad = "Nie udalo sie znalezc przycisku dostepnych polaczen Strona druga "
+                x = WyjscieBledu(blad,driver,blad)
+                return False
             blad = "Nie udało się wpisać danych do formularza Strony glownej"
             x = WyjscieBledu(blad,driver,blad)
             return False
@@ -218,7 +251,19 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             # Wyszukanie przycisków i kliknięcie ich
             start_time1=time.time()
             if(przycisk == 1):
-                blad = "Nie udalo sie znalezc przycisku dostepnych polaczen Strona druga "
+                a=Captacha(driver)
+                if(a==1):
+                    print("Wykryto ochrone antybotowa Captcha przy wyszukiwaniu polaczen bota :", NR_Bota)
+                    button = driver.find_element(By.XPATH,("//*[@id='search-btn']"))
+                    button.click()
+                    przycisk = wybierz_polaczenie(driver,wait ,7)
+                    time.sleep(2)
+                else:
+                    blad = "Nie udalo sie znalezc przycisku dostepnych polaczen Strona druga "
+                    x = WyjscieBledu(blad,driver,blad)
+                    return False
+            if(przycisk == 1): ## kompilator bez tego mówi ze przycisk nie jest zdefiniowany
+                blad = "Nie udalo sie znalezc przycisku dostepnych polaczen Strona druga po kliknieciu captacha "
                 x = WyjscieBledu(blad,driver,blad)
                 return False
             try:
@@ -275,28 +320,28 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             x = WyjscieBledu(blad,driver,blad)
             return False
         try:
-            Logi.append(" sprawdzam czy sa elementy do wypelnienia na stronie 4")
+            Logi.append(" sprawdzam czy sa elementy do wypelnienia na stronie czwartej")
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,("#mainPassenger"))))
             Logi.append(" wykrylem pierwsze pole przechodze do pobierania ich")
             imie_Strona_3 = driver.find_element(By.XPATH,("//*[@id='passenger[0].name']"))
             pasazer_Strona_3 = driver.find_element(By.XPATH,("//*[@id='passenger[0].surname']"))
             email_Strona_3 = driver.find_element(By.XPATH,("//*[@id='passenger[0].email']"))
             email_powt_Strona_3 = driver.find_element(By.XPATH,("//*[@id='passenger[0].email2']"))
-            Logi.append(" wykryto wszystkie formularze strony 4 przechodze dalej ")
+            Logi.append(" wykryto wszystkie formularze strony czwartej przechodze dalej ")
         except TimeoutException:
-            blad = "Nie udało się załadować formularza Strona 4"
+            blad = "Nie udało się załadować formularza Strona czwartej"
             x = WyjscieBledu(blad,driver,blad)
             return False
         except NoSuchElementException:
-            blad = "Nie udało się znalezc elementu Strona 4"
+            blad = "Nie udało się znalezc elementu Strona czwartej"
             x = WyjscieBledu(blad,driver,blad)
             return False
         except:
-            blad = "Nie udało się załadować formularza Strona 4"
+            blad = "Nie udało się załadować formularza Strona czwartej"
             x = WyjscieBledu(blad,driver,blad)
             return False
         try:
-            Logi.append(" znalazlem wszystkie formularzy strony 4 przechodze do ich wypeniania")
+            Logi.append(" znalazlem wszystkie formularzy strony czwartej przechodze do ich wypeniania")
             imie_Strona_3.click()
             imie_Strona_3.clear()
             imie_Strona_3.send_keys(imie)
@@ -309,39 +354,39 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             email_powt_Strona_3.click()
             email_powt_Strona_3.clear()
             email_powt_Strona_3.send_keys(email)
-            Logi.append(" udalo sie wypelnic elementy formularza strony 4 ")
+            Logi.append(" udalo sie wypelnic elementy formularza strony czwartej ")
         except ElementClickInterceptedException:
-            blad = "Nie udało się wpisać danych do formularza Strona 4"
+            blad = "Nie udało się wpisać danych do formularza Strona czwartej"
             x = WyjscieBledu(blad,driver,blad)
             return False
         try:
             start_time2=time.time()
-            Logi.append("Szukam przycisku dalej na stronie 4 ")
+            Logi.append("Szukam przycisku dalej na stronie czwartej ")
             driver.find_element(By.XPATH,("//*[@id='go-to-summary']")).click();
         except NoSuchElementException:
-            blad = "Nie udało się kliknąć przycisku wyszukaj Strona 4"
+            blad = "Nie udało się kliknąć przycisku wyszukaj Strona czwartej"
             x = WyjscieBledu(blad,driver,blad)
             return False
         try:
-            Logi.append("czekam na zaladowanie strony 5  ")
+            Logi.append("czekam na zaladowanie strony piatej")
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,("#summary-wrapper"))))
-            Logi.append("udalo sie zaladowac strone 5  ")
+            Logi.append("udalo sie zaladowac strone piatej  ")
             tabelaczasow.append(time.time() - strona3Time)
-            Logi.append("szukam elementuw na stronie 5 do klikniecia")
+            Logi.append("szukam elementuw na stronie piatej do klikniecia")
             regula_1 = driver.find_element(By.XPATH,("//*[@id='regulations']"))
             regula_2 = driver.find_element(By.XPATH,("//*[@id='carriers']"))
             platnosc = driver.find_element(By.XPATH,("//*[@id='payment']"))
-            Logi.append("znalazlem elementy do klikniecia strona 5 ")
+            Logi.append("znalazlem elementy do klikniecia strona piatej ")
         except TimeoutException: ## sprawdzic czy nie ma komunikatu sprzedaz zablokowana (do dodania)
-            blad = "Nie udało się załadować formularza Strona 5 : TimeoutException"
+            blad = "Nie udało się załadować formularza Strona piatej : TimeoutException"
             x = WyjscieBledu(blad,driver,blad)
             return False
         except NoSuchElementException:
-            blad = "Nie udało się znalezc elementu na stronie 5 : nosuchelementexception"
+            blad = "Nie udało się znalezc elementu na stronie piatej : nosuchelementexception"
             x = WyjscieBledu(blad,driver,blad)
             return False
         try:
-            Logi.append("klikam w zaladowane elementy strony 5 ")
+            Logi.append("klikam w zaladowane elementy strony piatej ")
             driver.execute_script("arguments[0].scrollIntoView(true);", regula_1)
             driver.execute_script("arguments[0].click()", regula_1)
             driver.execute_script("arguments[0].scrollIntoView(true);", regula_2)
@@ -352,7 +397,7 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
             driver.execute_script("arguments[0].click()", platnosc)
             Logi.append("Czekam na zaladowanie strony 6 ")
         except WebDriverException as e:
-            blad = ("Podczas wypełniania strony 4 nastąpił błąd", e)
+            blad = ("Podczas wypełniania strony czwartej nastąpił błąd", e)
             x = WyjscieBledu(blad,driver,blad)
             return False
         try: 
@@ -370,7 +415,7 @@ def bilkom(A,B,imie,nazwisko,email,tabelaczasow,times,date):
                 x = WyjscieBledu(blad,driver,blad)
                 return False
         except WebDriverException as e:
-            blad = ("Podczas przechodzenia do  5 Strony  nastąpił błąd", e)
+            blad = ("Podczas przechodzenia do  piatej Strony  nastąpił błąd", e)
             x = WyjscieBledu(blad,driver,blad)
             return False
     except Exception as e : ## obsluga bledu nieznanego 

@@ -1,0 +1,36 @@
+Testowane polaczenia to: £ódŸ--Kutno
+Bot nr 6 wykonuje ponowne podejscie do strony nr 0 
+Bot bilkom nr 6 Start
+ Inicjacja przegladarki firefox 
+ Inicjacja strony billkom.pl
+ Zamykanie reklamy 
+ £adowanie elementów strony g³ównej 
+ Uda³o siê za³adowaæ element stacji poczatkowej
+ Udalo sie zaladowaæ element stacji koncowej
+ Udalo sie zaladowaæ element DATA
+ Udalo sie zaladowaæ element Time
+ Klikniecie przycisku wyszukaj polaczenia 
+ Wyszukanie polaczenia dostepnego z przesiadkami lub bez 
+ sprawdzam czy poprawnie zaladowalo przycisk i czy jest dostepny 
+ sprawdzam czy strona nie wykryla zbyt wielu polaczen  
+ strona nie wykryla zbyt wielu polaczen przechodze dalej  
+ sprawdzam czy jest popup o zmianie trasy 
+Nie znaleziono okna z ostrze¿eniem.
+ sprawdzam czy jestem na nastepnej stronie 3  
+  jestem na stronie 3   
+ sprawdzam czy jest przycisk dalej i klikam go 
+ sprawdzam czy sa elementy do wypelnienia na stronie czwartej
+ wykrylem pierwsze pole przechodze do pobierania ich
+ wykryto wszystkie formularze strony czwartej przechodze dalej 
+ znalazlem wszystkie formularzy strony czwartej przechodze do ich wypeniania
+ udalo sie wypelnic elementy formularza strony czwartej 
+Szukam przycisku dalej na stronie czwartej 
+czekam na zaladowanie strony piatej
+udalo sie zaladowac strone piatej  
+szukam elementuw na stronie piatej do klikniecia
+znalazlem elementy do klikniecia strona piatej 
+klikam w zaladowane elementy strony piatej 
+przechodze dalej klikajac przycisk platnosc 
+Czekam na zaladowanie strony 6 
+zaladowano strone 6 sprawdzam czy poprawnie jest wyswietlony link
+Bot nr 6 ukonczyl zadanie

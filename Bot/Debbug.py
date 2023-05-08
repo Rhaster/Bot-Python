@@ -88,8 +88,9 @@ def WyjscieBledu(Komunikat,driver,log): # wyjscie bota po napotkaniu bledu
     Logi.append(log)
     now = datetime.now()
     a = now.strftime("%d_%H_%M")
+    xd = blad[:20]
     try:
-        xe=f"Error_Ic/{str(a)}_blad_{str(blad)}.png"
+        xe=f"Error_Ic/{str(a)}_blad_{str(xd)}.png"
         driver.save_screenshot(xe)
     except Exception as e:
         print("Wystąpił błąd podczas zapisywania zrzutów ekranu:", e)

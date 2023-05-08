@@ -88,6 +88,7 @@ procarray=[]
 if(check == 1):
     print("Uruchamianie botów Intercity i Bilkom")
     for i in range(n_intercity):
+        print("Sprawdzane polaczenia bot Intercity nr ",i)# type ignore
         filename = f"Log\\czasy_Intercity_{i}.txt"  # unikalna nazwa pliku dla każdej instancjiHolder[i][0][0][0]) # 3 to kolumna "Do" w DataFrame  2 to kolumna "Z" w DataFrame # 0 to kolumna "Przewoźnik" w DataFrame 
         f = open(filename, "a")  
         try:

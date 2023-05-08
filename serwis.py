@@ -22,7 +22,7 @@ config.read(config_path)
 # Względna ścieżka do interpretera Pythona
 Interpreter = os.path.join(proj_dir, 'Scripts', 'python.exe')
 
-# Względna ścieżka do testowego skryptu
+# Względna ścieżka do testowego skrypt
 Test_py = os.path.join(proj_dir, 'Bot', 'test.py')
 
 # Względna ścieżka do pliku audio
@@ -69,7 +69,14 @@ def activate():
     powt_intercity = config.getint('intervals', 'powt_intercity')
     powt_billkom = config.getint('intervals', 'powt_billkom')
     minutes = config.getint('intervals', 'minutes')
-    
+    start_time_str = config.get('Przerwa', 'start_time')
+    end_time_str = config.get('Przerwa', 'end_time')
+
+    # przekształcenie wczytanych stringów na obiekty datetime.time
+    start_time = dt.datetime.strptime(start_time_str, '%H:%M').time()
+    end_time = dt.datetime.strptime(end_time_str, '%H:%M').time()
+
+    # odczytanie aktualnej godziny
         # Wczytanie wartości z sekcji botvv
     bot_mode = config.get('bot', 'bot_mode')
     now1 = datetime.now()
@@ -77,26 +84,32 @@ def activate():
     flaga=0
     while True:
         Start = time.time()
-        aktualna_godzina = dt.datetime.now().strftime("%H:%M")
-        if(bot_mode == "0" and flaga==1) and aktualna_godzina >= "00:30": ## dodanie obslugi przerwy technicznej od 0:00 do 0:30
+        current_time = dt.datetime.now().time()
+        if((bot_mode == "0" and flaga==1) and (start_time > current_time or   current_time > end_time) ): ## dodanie obslugi przerwy technicznej od 0:00 do 0:30
+            print("aktualna godzina",current_time)
             time.sleep(1)
             print("aktywacja procesu Intercity + billkom")
             t=subprocess.Popen([Interpreter, 
                            Test_py, str(n_intercity), str(n_bilkom), str(1),str(powt_intercity),str(powt_billkom),str(proj_dir)])
             t.wait()
-        elif(bot_mode == "1" and flaga==1):
+        elif((bot_mode == "1" and flaga==1) and (start_time > current_time or   current_time > end_time) ):
+            print("aktualna godzina",current_time)
             time.sleep(1)
             print("aktywacja procesu Intercity")
             t=subprocess.Popen([Interpreter, 
                            Test_py, str(n_intercity), str(n_bilkom), str(2),str(powt_intercity),str(powt_billkom),str(proj_dir)])
             t.wait()
-        elif(bot_mode == "2" and flaga==1):
+        elif((bot_mode == "2" and flaga==1) and (start_time > current_time or   current_time > end_time) ):
+            print("aktualna godzina",current_time)
             time.sleep(1)
             print("aktywacja procesu Billkom")
             print("aktywacja billkom")
             t=subprocess.Popen([Interpreter, 
                                     Test_py, str(n_intercity), str(n_bilkom), str(2),str(powt_intercity),str(powt_billkom),str(proj_dir)])
             t.wait()
+        else:
+            print("przerwa techniczna do ", end_time)
+            print("aktualna godzina",current_time)
         i=0
         print("Wywolanie botow trwalo", time.time()-Start , "sekund")
         if(flaga==0): # inicjalizacja wykresu
@@ -106,28 +119,24 @@ def activate():
                     value=[0, 0, 0, 0]
                 ))
             #print(df)
-
             fig.add_trace(go.Scatter(
                 x=[df['date'][0]],
                 y=[df['value'][0]],
                 mode="markers+lines",
                 name="Intercity Sukces",fillcolor="blue"
             ))
-
             fig.add_trace(go.Scatter(
                 x=[df['date'][1]],
                 y=[df['value'][1]],
                 mode="markers+lines",
                 name="Intercity Niepowodzenie",fillcolor="red"
             ))
-
             fig1.add_trace(go.Scatter(
                 x=[df['date'][2]],
                 y=[df['value'][2]],
                 mode="markers+lines",
                 name="Bilkom Sukces",fillcolor='#bcbd22'
             ))
-
             fig1.add_trace(go.Scatter(
                 x=[df['date'][3]],
                 y=[df['value'][3]],
